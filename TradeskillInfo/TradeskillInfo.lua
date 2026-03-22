@@ -791,7 +791,7 @@ function TradeskillInfo:GetCombineComponents(id, getVendorPrice, getAuctioneerPr
 	for s in string.gmatch(compstring,"%S+") do
 		-- initialize c
 		local c = {};
-		-- gets the component id and number, i.e. looking for 10998 10940:2
+		-- gets the component id and number, i.e. looking for 10998 or 10940:2 format
 		_,_,c.id,c.num = string.find(s,"(%d+):(%d+)");
 		c.id = tonumber(c.id) or tonumber(s);
 		c.num = tonumber(c.num) or 1;
@@ -799,13 +799,12 @@ function TradeskillInfo:GetCombineComponents(id, getVendorPrice, getAuctioneerPr
 			if TradeskillInfo:ShowingTooltipUsedInFilterAttuned() and GetItemAttuneForge and GetItemAttuneForge(id) >= attuneForges[self.db.profile.TooltipForgeMultiplier] then
 				forgemultiplier = 0
 			end
-			c.num = c.num * forgemultiplier
-			c.accountAmount = tonumber(c.num) or forgemultiplier;
+			c.accountAmount = (tonumber(c.num) * forgemultiplier) or forgemultiplier;
 		else
 			c.accountAmount = 0
 		end
 		if CanAttuneItemHelper and CanAttuneItemHelper(id) > 0 then
-			c.characterAmount = tonumber(c.num) or forgemultiplier;
+			c.characterAmount = (tonumber(c.num) * forgemultiplier) or forgemultiplier;
 		else
 			c.characterAmount = 0
 		end
