@@ -618,7 +618,7 @@ end
 ----------------------------------------------------------------------
 function TradeskillInfoUI:SkillButton_OnClick(frame, button)
 	if ( button == "LeftButton" ) then
-		if IsShiftKeyDown() and ChatFrameEditBox:IsVisible() then
+		if IsShiftKeyDown() and ChatEdit_GetActiveWindow() then
 			self:PasteRecipie(frame:GetID());
 		else
 			self:Frame_SetSelection(frame:GetID());
@@ -664,19 +664,20 @@ end
 ----------------------------------------------------------------------
 function TradeskillInfoUI:ReagentIcon_OnClick(frame, button)
 	if self:Item_OnClick(frame, button) then return end
+	local editBox = ChatEdit_GetActiveWindow()
 	if ( button == "LeftButton" ) then
 		if ( IsControlKeyDown() ) then
 			DressUpItemLink(frame.tooltip);
 		elseif IsShiftKeyDown() then
-			if ChatFrameEditBox:IsVisible() then
+			if editBox then
 				if frame.link then
-					ChatFrameEditBox:Insert(frame.link);
+					editBox:Insert(frame.link);
 				else
-					ChatFrameEditBox:Insert(frame.name);
+					editBox:Insert(frame.name);
 				end
 			end
 		elseif IsAltKeyDown() then
-			if ChatFrameEditBox:IsVisible() then
+			if editBox then
 				self:PasteRecipie(frame.id);
 			end
 		else
@@ -1375,7 +1376,7 @@ function TradeskillInfoUI:PasteRecipie(id)
 		end
 		skillLink = "|cffffd000|Henchant:" .. enchantId .. "|h[" .. enchantName .. "]|h|r";
 		if skillLink then
-			ChatFrameEditBox:Insert(skillLink);
+			ChatEdit_GetActiveWindow():Insert(skillLink);
 			return;
 		end
 	end
@@ -1410,7 +1411,7 @@ function TradeskillInfoUI:PasteRecipie(id)
 		text = text .. " : " .. skillName .. "(" .. level .. ")";
 	end
 
-	ChatFrameEditBox:Insert(text);
+	ChatEdit_GetActiveWindow():Insert(text);
 end
 
 do
