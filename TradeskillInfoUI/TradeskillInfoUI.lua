@@ -721,6 +721,26 @@ function TradeskillInfoUI:Item_OnClick(frame, button)
 			return true;
 		end
 	end
+	if button == TradeskillInfo.vars.MouseButtons[TradeskillInfo.db.profile.BankMouseButton] then
+		local accept = true
+		for i, func in ipairs(TradeskillInfo.vars.ShiftKeys) do
+			if i == TradeskillInfo.db.profile.BankShiftKey then
+				accept = accept and func()
+			else
+				accept = accept and not func()
+			end
+		end
+
+		if accept then
+			local _,_,item = string.find(frame.tooltip,":(%d+):");
+
+			OpenResourceSummary()
+			_G["RBankFrame-Search"]:SetText(frame.name)
+			_G["RBankFilter"] =frame.name
+			_G["RBankSel"]=item
+			UpdateResourceSummary()
+		end
+	end
 end
 
 ----------------------------------------------------------------------

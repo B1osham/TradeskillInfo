@@ -457,6 +457,33 @@ local uiOptions = {
 			type = "description",
 			order = 49,
 		},
+		bankMouse = {
+			name = L["Bank Mouse Button"],
+			desc = L["Mouse button that opens to the item in the Resource Bank"],
+			type  = "select",
+			values = mouseSelect,
+			get = getSelect,
+			set = setSelect,
+			arg = "BankMouseButton",
+			disabled = function() return not TradeskillInfo.db.profile["QuickSearch"] end,
+			order = 60
+		},
+		bankModifier = {
+			name = L["Bank Modifier Key"],
+			desc = L["Modifier key to be held down to open the Resource Bank"],
+			type  = "select",
+			values = modSelect,
+			get = getSelect,
+			set = setSelect,
+			arg = "BankShiftKey",
+			disabled = function() return not TradeskillInfo.db.profile["QuickSearch"] end,
+			order = 50
+		},
+		sep3 = {
+			name = "",
+			type = "description",
+			order = 69,
+		},
 		strata = {
 			name = L["Frame Strata"],
 			desc = L["Set TradeskillInfoUI frame strata"],
@@ -465,7 +492,7 @@ local uiOptions = {
 			get = getSelect,
 			set = setSelect,
 			arg = "FrameStrata",
-			order = 50
+			order = 70
 		},
 		scale = {
 			name = L["UI Scale"],
@@ -477,7 +504,7 @@ local uiOptions = {
 			isPercent = false,
 			get = getRange,
 			set = setRange,
-			order = 60,
+			order = 80,
 			arg = "UIScale",
 		},
 	}

@@ -151,6 +151,8 @@ function TradeskillInfo:OnInitialize()
 			QuickSearch = true,
 			SearchMouseButton = 2,
 			SearchShiftKey = 1,
+			BankMouseButton = 2,
+			BankShiftKey = 2,
 			ColorAHRecipes = true,
 			AHColorLearnable = { r=1.0, g=1.0, b=1.0 },
 			AHColorAltLearnable = { r=0.1, g=1.0, b=0.1 },
@@ -640,6 +642,26 @@ function TradeskillInfo:Item_OnClick(button,link)
 				else
 					self:PrintWhereUsed(id);
 				end
+			end
+		end
+		if button == self.vars.MouseButtons[self.db.profile.BankMouseButton] then
+			local accept = true
+			for i, func in ipairs(self.vars.ShiftKeys) do
+				if i == self.db.profile.BankShiftKey then
+					accept = accept and func()
+				else
+					accept = accept and not func()
+				end
+			end
+
+			if accept then
+				local id = getIdFromLink(link);
+				local name = getNameFromLink(link)
+				OpenResourceSummary()
+				_G["RBankFrame-Search"]:SetText(name)
+				_G["RBankFilter"] =name
+				_G["RBankSel"]=id
+				UpdateResourceSummary()
 			end
 		end
 	end
