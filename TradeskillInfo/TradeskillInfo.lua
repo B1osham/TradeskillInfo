@@ -222,6 +222,31 @@ function TradeskillInfo:OnEnable()
 	self:RegisterEvent("SKILL_LINES_CHANGED", "OnSkillUpdate");
 	self:RegisterEvent("ADDON_LOADED", "OnAddonLoaded");
 	self:HookTooltips();
+
+	local hookFrame = CreateFrame("Frame")
+	local startTime = GetTime()
+	local timeout = 30
+	
+	hookFrame:SetScript("OnUpdate", function(self, elapsed)
+		if _G["ScootsCraft-MinimapButton"] and not _G["ScootsCraft-CraftItem-Reagent-8"] then
+			_G["ScootsCraft-MinimapButton"]:Click()
+			timeout = timeout - elapsed
+    		if _G["ScootsCraft-CraftItem-Reagent-8"] then
+    			TradeskillInfo:HookScootsCraft();
+    		    self:SetScript("OnUpdate", nil)
+			    self:Hide()
+				_G["ScootsCraft-MinimapButton"]:Click()
+				return
+    		end
+		
+    		if timeout < 0 then
+    		    self:SetScript("OnUpdate", nil)
+    		    self:Hide()
+				_G["ScootsCraft-MinimapButton"]:Click()
+    		end
+		end
+    end)
+
 	-- Get rid of legacy difficulty data
 	self.db.global.difficulty = nil
 	-- Migrate the TooltipKnownBy, etc fields
@@ -249,6 +274,8 @@ function TradeskillInfo:OnAddonLoaded(event, addon)
 	       addon == "TradeskillHD" or
 		   addon == "AdvancedTradeSkillWindow" then
 		self:HookTradeSkillUI();
+	elseif addon == "ScootsCraft" then
+		self:HookScootsCraft();
 	end
 	self:BuildWhereUsed();
 end
@@ -305,6 +332,19 @@ function TradeskillInfo:HookAuctionUI()
 --	if Auc-Advanced and not self:IsHooked(Auc-Advanced, "lib.ListUpdate")
 --		self:Hook (Auc-Advanced, "lib.ListUpdate")
 --	end
+end
+
+local hookedScootsCraftUi = false
+
+function TradeskillInfo:HookScootsCraft()
+	if _G["ScootsCraft-MasterFrame"] and not hookedScootsCraftUi then
+		for j=1,8 do
+			local button = getglobal("ScootsCraft-CraftItem-Reagent-"..j);
+			self:HookScript(button,"OnClick","ScootsCraftButton_OnClick");
+			button:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+		end
+		hookedScootsCraftUi = true
+	end
 end
 
 function TradeskillInfo:GetExtraItemDetailText(something, tradeskill, skill_index)
@@ -618,6 +658,11 @@ function TradeskillInfo:AuctionItemButton_OnClick(object, button)
 	local link = GetAuctionItemLink("list",itemID)
 	if self:Item_OnClick(arg1,link) then return end
 	self.hooks[object].OnClick(object,button)
+end
+
+function TradeskillInfo:ScootsCraftButton_OnClick(object, button)
+	local link = (select(2, GetItemInfoCustom(object.itemId)))
+	if self:Item_OnClick(button,link) then return end
 end
 
 function TradeskillInfo:Item_OnClick(button,link)
